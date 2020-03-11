@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Balancer Groups</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <a class="navbar-brand" href="/">Balancer</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/users/">Users</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/groups/">Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/history/">History</a>
+      </li> 
+    </ul>
+  </div>  
+</nav>
+<br>
+
+<div class="container">
+    <form action="/groups/doAdd" method="POST" th:object="${dto}" enctype="utf8" class="mt-2">
+    <div class="form-group">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Group Name" th:field="*{groupName}">
+            <div class="input-group-append">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Members
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu list-group-striped">
+                        <li th:each="user : ${users}" class="pl-3 pt-3">
+                            <input type="checkbox" name="members" th:value="${user.id}" th:id="${user.id}"/>
+                            <label th:text="${user.name}" th:for="${user.id}"></label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="input-group-append">
+                <button class="btn btn-success" type="submit">Add Group</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- errors -->
+    <div class="alert alert-danger alert-dismissable" th:each="error: ${#fields.errors('*')}">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <span th:text="${error}">Error message</span>
+    </div>
+
+    <!-- list of groups -->
+    <div class="card mt-3" th:each="group: ${groups}">
+      <div class="card-body">
+          <h4 class="card-title"><span th:text="${group.name}">User Name</span></h4>
+          <p>
+              <h6 class="d-inline">Members:</h6> <h6 class="d-inline" th:each="member : ${group.members}"><span th:text="${member.name}" class="badge badge-primary ml-2">Member Name</span></h6>
+          </p>
+      </div>
+    </div>
+
+</div>
+</body>
+</html>

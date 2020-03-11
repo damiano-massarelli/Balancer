@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Balancer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <a class="navbar-brand" href="#">Balancer</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/users/">Users</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/groups/">Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/history/">History</a>
+      </li>
+    </ul>
+  </div>  
+</nav>
+<br>
+
+<div class="container">
+    <form action="/expenses/doAdd" th:object="${dto}" method="POST" enctype="utf8" class="mt-2">
+        <div class="form-group">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Expense Name" th:field="*{title}">
+              <input type="number" step="0.01" class="form-control" placeholder="Amount" th:field="*{amount}">
+              
+              <!-- Payer selection -->
+              <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Payer
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu list-group-striped">
+                    <li th:each="user : ${users}" class="pl-3 pt-3">
+                        <input type="radio" name="payer" th:value="${user.id}" th:field="*{creditor}" th:id="${user.id}"/>
+                        <label th:text="${user.name}" th:for="${user.id}"></label>
+                    </li>
+                </ul>
+              </div>
+              
+              <!-- Members -->
+              <div class="dropdown wide-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Members
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu list-group-striped">
+                  <!-- Users -->
+                  <li th:each="user : ${users}" class="pl-3 pt-3 pr-3 pb-3">  
+                    <input  type="checkbox" name="members" th:value="${user.id}" th:field="*{debtors}" th:id="${user.id}"/>
+                    <label th:text="${user.name}" th:for="${user.id}"></label>
+                    <input type="number" value="0.00" step="0.01" class="form-control" th:field="*{debtorToExtra[__${user.id}__]}" placeholder="Extra" name="extras">
+                  </li>
+                  
+                  <!-- Groups -->
+                  <li th:each="group : ${groups}" class="pl-3 pt-3 pr-3 pb-3">  
+                    <input  type="checkbox" name="members" th:value="${group.id}" th:field="*{groups}" th:id="${'group' + group.id}"/>
+                    <label th:text="${group.name}" th:for="${'group' + group.id}"></label>
+                  </li>
+
+                </ul>
+              </div>
+
+              <div class="input-group-append">
+                <button class="btn btn-success" type="submit">Add Expense</button>
+              </div>
+            </div>
+        </div>
+
+        <!-- errors -->
+        <div class="alert alert-danger alert-dismissable" th:each="error: ${#fields.errors('*')}">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <span th:text="${error}">Error message</span>
+        </div>
+
+    </form>
+
+    <!-- list of transactions -->
+    <div class="card mt-3" th:each="transaction: ${transactions}">
+      <div class="card-body">
+          <div class="transaction-title">
+            <span th:text="${transaction.from.name}">From</span> <i class="fa fa-arrow-circle-right"></i> <span th:text="${transaction.to.name}">To</span>
+            <span class="badge badge-success"><span th:text="${transaction.amount}">Amount</span> &euro;</span>
+          </div>
+          <div class="mt-2">
+            <a th:href="${'/expenses/payback?payerId=' + transaction.to.id + '&receiverId=' + transaction.from.id + '&amount=' + transaction.amount}" class="btn btn-success">Mark as paid <i class="fa fa-check-circle"></i></a>
+          </div>
+      </div>
+  </div>
+
+</div>
+
+</body>
+</html>
+
+
