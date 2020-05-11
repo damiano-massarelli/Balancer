@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dam.balancer.controllers.dtos.GroupDTO;
 import com.dam.balancer.model.User;
-import com.dam.balancer.services.GroupAlreadyExistsException;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
+import com.dam.balancer.services.exceptions.GroupAlreadyExistsException;
 
 @Controller
 @RequestMapping(path = "/groups")

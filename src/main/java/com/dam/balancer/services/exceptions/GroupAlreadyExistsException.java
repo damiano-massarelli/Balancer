@@ -1,4 +1,4 @@
-package com.dam.balancer.services;
+package com.dam.balancer.services.exceptions;
 
 public class GroupAlreadyExistsException extends RuntimeException {
 

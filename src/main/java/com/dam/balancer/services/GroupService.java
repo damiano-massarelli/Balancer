@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.dam.balancer.model.Group;
 import com.dam.balancer.model.User;
 import com.dam.balancer.repos.GroupRepository;
+import com.dam.balancer.services.exceptions.GroupAlreadyExistsException;
 
 @Service
 @Transactional

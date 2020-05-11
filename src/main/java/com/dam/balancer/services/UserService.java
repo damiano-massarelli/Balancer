@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.dam.balancer.model.User;
 import com.dam.balancer.repos.UserRepository;
+import com.dam.balancer.services.exceptions.UserAlreadyExistsException;
 
 @Service
 @Transactional
@@ -27,7 +28,7 @@ public class UserService {
 	 */
 	public User createUser(String name) {
 		if (userRepository.findByName(name) != null) {
-			throw new UserAlreadyExistsException();
+			throw new UserAlreadyExistsException("user '" + name + "' already exists.");
 		}
 		
 		User user = new User(name);
