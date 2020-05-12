@@ -1,22 +1,22 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import MainNavbar from './common/MainNavbar'
-import UserList from './users/UserList'
+import UserMenu from './users/UserMenu'
 import Groups from './groups/Groups'
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, BrowserRouter, Switch } from 'react-router-dom'
 
 function App(props) {
   return (
-      <Router>
+    <BrowserRouter>
 
-        <MainNavbar />
-        <Container>
-          <Switch>
-            <Route path="/users/" component={UserList} />
-            <Route path="/groups/" component={Groups} />
-          </Switch>
-        </Container>
-      </Router>
+      <MainNavbar />
+      <Container>
+        <Switch>
+          <Route exact path="/users/" component={UserMenu} />
+          <Route exact path="/groups/" component={Groups} />
+        </Switch>
+      </Container>
+    </BrowserRouter>
 
   );
 }
