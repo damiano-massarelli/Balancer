@@ -1,5 +1,8 @@
 package com.dam.balancer.services.exceptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,13 +10,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class UserNotFoundAdvice {
+public class UserAlreadyExistsAdvice {
 
 	@ResponseBody
 	@ExceptionHandler(UserAlreadyExistsException.class)
-	@ResponseStatus(HttpStatus.CONFLICT)
-	String employeeNotFoundHandler(UserAlreadyExistsException exception) {
-		return exception.getMessage();
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	Map<String, String> userAlreadyExistHandle(UserAlreadyExistsException exception) {
+		Map<String, String> error = new HashMap<>();
+		error.put("generic", exception.getMessage());
+		
+		return error;
 	}
 
 }

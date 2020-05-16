@@ -2,8 +2,13 @@ import React from 'react';
 import { USER_API_PATH } from '../config';
 import UserList from './UserList';
 import ErrorAlert from '../errors/ErrorAlert';
-import Spinner from 'react-bootstrap/Spinner';
-import NewUserInput from './NewUserInput';
+import TextInput from './TextInput';
+import FieldValidationErrors from '../errors/FieldValidationErrors';
+import MultiElementSelect from '../common/MultiElementSelect';
+
+function Te(props) {
+    return <span>{ props.element.name }</span>
+}
 
 export default class UserMenu extends React.Component {
 
@@ -14,8 +19,8 @@ export default class UserMenu extends React.Component {
             users: [],
             isLoadingUsers: false,
             isAddingUser: false,
-            loadingUsersError: false,
-            addingUserError: false
+            errorLoadingUsers: false,
+            addingUserError: null
         };
 
         this.loadUsers = this.loadUsers.bind(this);
@@ -29,28 +34,34 @@ export default class UserMenu extends React.Component {
     async addUser(username) {
         this.setState({ isAddingUser: true, addingUserError: null });
 
+        const userDTO = {
+            name: username
+        };
+
         let response = null;
         try {
             response = await fetch(USER_API_PATH, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
-                'Content-Type': 'text/plain'
+                    'Content-Type': 'application/json',
                 },
-                body: username
+                body: JSON.stringify(userDTO)
             });
         }
         catch (e) {
-            this.setState({ isAddingUser: false, addingUserError: "Unable to add user" });
+            this.setState({ isAddingUser: false, addingUserError: { generic: "The service is temporarily unavailable" } });
             return;
         }
 
-        if (response.ok) {
-            const user = await response.json();
-
+        const data = await response.json();
+        if (response.ok) { // response is ok, data contains a user
             const users = this.state.users.slice();
-            users.push(user); // add the new user
+            users.push(data); // add the new user
             this.setState( {users: users, isAddingUser: false} );
+        }
+        else if (response.status === 400) { // bad request, error details are stored in the response data
+            this.setState( {isAddingUser: false, addingUserError: data} );
         }
     }
 
@@ -58,14 +69,14 @@ export default class UserMenu extends React.Component {
      * Loads users from server and updates the list
      */
     async loadUsers() {
-        this.setState({ error: false, isLoading: true });
+        this.setState({ errorLoadingUsers: false, isLoadingUsers: true });
 
         let response = null;
         try {
             response = await fetch(USER_API_PATH);
         }
         catch (e) {
-            this.setState({ isLoading: false, error: true });
+            this.setState({ isLoadingUsers: false, errorLoadingUsers: true });
             return;
         }
 
@@ -74,13 +85,13 @@ export default class UserMenu extends React.Component {
 
             const state = {
                 users: data._embedded ? data._embedded.userList : [], 
-                isLoading: false,
-                error: false
+                isLoadingUsers: false,
+                errorLoadingUsers: false
             };
             this.setState(state);
         }
         else {
-            this.setState( { isLoading: false, error: true } );
+            this.setState( { isLoadingUsers: false, errorLoadingUsers: true } );
         }
     }
 
@@ -89,32 +100,33 @@ export default class UserMenu extends React.Component {
     }
 
     render() {
-        let userList = <UserList users={ this.state.users } />
+        let userList = <UserList users={ this.state.users } isLoading={ this.state.isLoadingUsers } />
 
-        if (this.state.isLoadingUsers) { // loading, show spinner
-            userList = (
-                <div className="text-center">
-                    <Spinner animation="grow" />
-                </div>
-            );
-        }
-        else if (this.state.loadingUsersError) { // an error occurred, show error
+        if (this.state.errorLoadingUsers) { // an error occurred, show it
             userList = <ErrorAlert title="Cannot load users"
                                    text="The service is temporarily not available"
                                    onRetry= { this.loadUsers } />
         }
-        else if (this.state.users.length === 0) { // everything went fine but no users to display
-            userList = (
-                <div className="text-center">
-                    <i>No users to display at the moment</i>
-                </div>
-            )
+
+        let newUserErrors = null;
+        if (this.state.addingUserError) {
+            if (this.state.addingUserError.fieldErrors) {
+                newUserErrors = <FieldValidationErrors errors={ this.state.addingUserError.fieldErrors } />;
+            }
+            else if (this.state.addingUserError.generic) {
+                newUserErrors = <ErrorAlert text={ this.state.addingUserError.generic } />
+            }
         }
 
         return (
             <div className="mt-5">
-                <NewUserInput onAdd={ this.addUser } isLoading={ this.state.isAddingUser } />
+                <TextInput onAdd={ this.addUser } isLoading={ this.state.isAddingUser } />
+                { newUserErrors }
                 { userList }
+                <MultiElementSelect elements={ this.state.users }
+                                    as={ Te }
+                                    keyExtractor={ elem => elem.id }
+                                    onChange={ sel => console.log(sel) } />
             </div>
         )
     }

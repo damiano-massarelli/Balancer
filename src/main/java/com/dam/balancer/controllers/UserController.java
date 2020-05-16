@@ -3,6 +3,8 @@ package com.dam.balancer.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
-
+import com.dam.balancer.controllers.dtos.UserDTO;
 import com.dam.balancer.model.User;
 import com.dam.balancer.services.UserService;
 
@@ -52,9 +54,9 @@ public class UserController {
 	} 
 
 	@PostMapping(path="/")
-	public EntityModel<User> add(@RequestBody String userName) {
+	public EntityModel<User> add(@Valid @RequestBody UserDTO dto) {
 		
-		User user = userService.createUser(userName);
+		User user = userService.createUser(dto.getName());
 		
 		return toEntityModel(user);
 	}

@@ -4,7 +4,10 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
 
-export default class NewUserInput extends React.Component {
+/**
+ * Input component for a new user.
+ */
+export default class TextInput extends React.Component {
 
     constructor(props) {
         super(props);
@@ -41,5 +44,4 @@ export default class NewUserInput extends React.Component {
             </InputGroup>
         );
     }
-
 }

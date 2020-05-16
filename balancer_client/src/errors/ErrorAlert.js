@@ -37,9 +37,15 @@ export default class ErrorAlert extends React.Component {
             retryButton = <Button onClick={ this.onRetry }>Retry <i className="fa fa-refresh"></i></Button>;
         }
 
+        let heading = null;
+        if (this.props.title) {
+            heading = <Alert.Heading> { this.props.title } </Alert.Heading>;
+        }
+
         return (
+
             <Alert variant="danger" show={ this.state.show } onClose={ this.onDismiss } dismissible>
-                <Alert.Heading> { this.props.title } </Alert.Heading>
+                { heading }
                 <p> { this.props.text } </p>  
                 { retryButton }
             </Alert>

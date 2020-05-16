@@ -28,7 +28,7 @@ public class UserService {
 	 */
 	public User createUser(String name) {
 		if (userRepository.findByName(name) != null) {
-			throw new UserAlreadyExistsException("user '" + name + "' already exists.");
+			throw new UserAlreadyExistsException("User '" + name + "' already exists.");
 		}
 		
 		User user = new User(name);
