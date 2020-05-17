@@ -1,5 +1,6 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
+import Spinner from 'react-bootstrap/Spinner';
 
 function RowElement(props) {
     const innerElementProps = { element: props.element };
@@ -57,6 +58,14 @@ export default class MultiElementSelect extends React.Component {
                                                                     element={ element }
                                                                     innerId={ this.props.keyExtractor(element) }
                                                                     onChange={ this.onChange }  />);
+
+        if (this.props.isLoading) {
+            return (
+                <div className="text-center">
+                    <Spinner animation="grow" />
+                </div>
+            );
+        }
 
         return (
             <Table striped bordered hover>

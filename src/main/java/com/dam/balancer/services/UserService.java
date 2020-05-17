@@ -1,9 +1,5 @@
 package com.dam.balancer.services;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +45,8 @@ public class UserService {
 	/**
 	 * @return the collection of all available users
 	 */
-	public Collection<User> getAll() {
-		List<User> users = new LinkedList<User>();
-		userRepository.findAll().forEach(users::add);
-		return users;
+	public Iterable<User> findAll() {
+		return userRepository.findAll();
 	}
 	
 }

@@ -47,8 +47,8 @@ public class ExpenseController {
 	private GroupService groupService;
 	
 	private void populateModel(Model model) {
-		model.addAttribute("users", userService.getAll());
-		model.addAttribute("groups", groupService.getAll());
+		model.addAttribute("users", userService.findAll());
+		model.addAttribute("groups", groupService.findAll());
 		model.addAttribute("transactions", expenseService.getBalance());
 	}
 	

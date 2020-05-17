@@ -1,14 +1,10 @@
 import React from 'react';
-import { USER_API_PATH } from '../config';
 import UserList from './UserList';
 import ErrorAlert from '../errors/ErrorAlert';
-import TextInput from './TextInput';
+import TextInput from '../common/TextInput';
 import FieldValidationErrors from '../errors/FieldValidationErrors';
-import MultiElementSelect from '../common/MultiElementSelect';
-
-function Te(props) {
-    return <span>{ props.element.name }</span>
-}
+import UserUtils from './UserUtils';
+import { USER_API_PATH } from '../config';
 
 export default class UserMenu extends React.Component {
 
@@ -71,28 +67,10 @@ export default class UserMenu extends React.Component {
     async loadUsers() {
         this.setState({ errorLoadingUsers: false, isLoadingUsers: true });
 
-        let response = null;
-        try {
-            response = await fetch(USER_API_PATH);
-        }
-        catch (e) {
-            this.setState({ isLoadingUsers: false, errorLoadingUsers: true });
-            return;
-        }
+        const loadState = await UserUtils.loadUsers();
+        Object.assign(loadState, { isLoadingUsers: false });
 
-        if (response.ok) { 
-            const data = await response.json();
-
-            const state = {
-                users: data._embedded ? data._embedded.userList : [], 
-                isLoadingUsers: false,
-                errorLoadingUsers: false
-            };
-            this.setState(state);
-        }
-        else {
-            this.setState( { isLoadingUsers: false, errorLoadingUsers: true } );
-        }
+        this.setState(loadState);
     }
 
     async componentDidMount() {
@@ -120,13 +98,13 @@ export default class UserMenu extends React.Component {
 
         return (
             <div className="mt-5">
-                <TextInput onAdd={ this.addUser } isLoading={ this.state.isAddingUser } />
+                <div className="mb-3">
+                    <TextInput onAdd={ this.addUser }
+                                isLoading={ this.state.isAddingUser }
+                                placeholder="Username" />
+                </div>
                 { newUserErrors }
                 { userList }
-                <MultiElementSelect elements={ this.state.users }
-                                    as={ Te }
-                                    keyExtractor={ elem => elem.id }
-                                    onChange={ sel => console.log(sel) } />
             </div>
         )
     }

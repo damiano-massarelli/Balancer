@@ -1,8 +1,5 @@
 package com.dam.balancer.services;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -40,10 +37,8 @@ public class GroupService {
 		return groupRepository.findByName(name);
 	}
 	
-	public Collection<Group> getAll() {
-		List<Group> groups = new LinkedList<Group>();
-		groupRepository.findAll().forEach(groups::add);
-		return groups;
+	public Iterable<Group> findAll() {
+		return groupRepository.findAll();
 	}
 	
 	/**

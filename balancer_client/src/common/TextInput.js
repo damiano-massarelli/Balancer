@@ -30,8 +30,8 @@ export default class TextInput extends React.Component {
         }
 
         return (
-            <InputGroup className="mb-3">
-                <FormControl placeholder="Username"
+            <InputGroup>
+                <FormControl placeholder={ this.props.placeholder }
                              onChange={ this.handleChange }
                              value={ this.state.username } required />
                 <InputGroup.Prepend>

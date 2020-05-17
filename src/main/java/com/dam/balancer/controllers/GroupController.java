@@ -6,7 +6,8 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +15,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dam.balancer.controllers.dtos.GroupDTO;
+import com.dam.balancer.model.Group;
 import com.dam.balancer.model.User;
+import com.dam.balancer.model.representational.GroupModelAssembler;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
 import com.dam.balancer.services.exceptions.GroupAlreadyExistsException;
 
-@Controller
-@RequestMapping(path = "/groups")
+@RestController
+@RequestMapping(path = "/api/groups")
 public class GroupController {
 	
 	@Autowired
@@ -31,13 +35,12 @@ public class GroupController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private GroupModelAssembler groupModelAssembler;
+	
 	@GetMapping(path = "/")
-	public  String showGroups(Model model) {
-		model.addAttribute("users", userService.getAll());
-		model.addAttribute("dto", new GroupDTO());
-		model.addAttribute("groups", groupService.getAll());
-		
-		return "show-all-groups";
+	public CollectionModel<EntityModel<Group>> all() {
+		return groupModelAssembler.toCollectionModel(groupService.findAll());
 	}
 	
 	@PostMapping(path = "/doAdd")
@@ -67,9 +70,9 @@ public class GroupController {
 			}
 		}
 
-		model.addAttribute("users", userService.getAll());
+		model.addAttribute("users", userService.findAll());
 		model.addAttribute("dto", dto);
-		model.addAttribute("groups", groupService.getAll());
+		model.addAttribute("groups", groupService.findAll());
 
 		return "show-all-groups";
 	}
