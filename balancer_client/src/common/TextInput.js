@@ -38,7 +38,7 @@ export default class TextInput extends React.Component {
                     <Button variant="outline-secondary"
                             disabled={ this.props.isLoading }
                             onClick={ () => this.props.onAdd(this.state.username) }>
-                        Add User { loadingSpinner }
+                        { this.props.buttonText } { loadingSpinner }
                     </Button>
                 </InputGroup.Prepend>
             </InputGroup>

@@ -10,11 +10,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.hateoas.server.core.Relation;
+
 /**
  * A group of users.
  */
 @Entity
 @Table(name="balancer_group")
+@Relation(collectionRelation = "members")
 public class Group {
 	
 	@Id

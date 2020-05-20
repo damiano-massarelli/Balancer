@@ -10,7 +10,7 @@ export default function Collapsible(props) {
         <Accordion defaultActiveKey="0">
             <Card>
                 <Accordion.Toggle as={Card.Header} variant="link" eventKey="0" onClick={() => setOpen(!open) }>
-                    <span>{ props.title } {open ? <i class="fa fa-angle-up"></i> : <i class="fa fa-angle-down"></i> }</span>
+                    <span>{ props.title } {open ? <i className="fa fa-angle-up"></i> : <i className="fa fa-angle-down"></i> }</span>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey="0">
                     <Card.Body>

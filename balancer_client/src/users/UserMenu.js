@@ -100,6 +100,7 @@ export default class UserMenu extends React.Component {
             <div className="mt-5">
                 <div className="mb-3">
                     <TextInput onAdd={ this.addUser }
+                                buttonText="Add User"
                                 isLoading={ this.state.isAddingUser }
                                 placeholder="Username" />
                 </div>

@@ -10,9 +10,11 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,11 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dam.balancer.controllers.dtos.GroupDTO;
 import com.dam.balancer.model.Group;
 import com.dam.balancer.model.User;
+import com.dam.balancer.model.representational.GroupModel;
 import com.dam.balancer.model.representational.GroupModelAssembler;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
-import com.dam.balancer.services.exceptions.GroupAlreadyExistsException;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/api/groups")
 public class GroupController {
@@ -39,41 +42,24 @@ public class GroupController {
 	private GroupModelAssembler groupModelAssembler;
 	
 	@GetMapping(path = "/")
-	public CollectionModel<EntityModel<Group>> all() {
+	public CollectionModel<GroupModel> all() {
 		return groupModelAssembler.toCollectionModel(groupService.findAll());
 	}
 	
-	@PostMapping(path = "/doAdd")
-	public String addGroup(Model model, @ModelAttribute("dto") @Valid GroupDTO dto, BindingResult result,
-			@RequestParam(value = "members" , required = false) Long[] members) {
+	@PostMapping(path = "/")
+	public GroupModel add(@Valid @RequestBody GroupDTO dto) {
 		
 		Set<User> users = new HashSet<User>();
 		
-		if (members != null) {
-			for (Long memberId : members) {
-				User user = userService.findById(memberId);
-				if (user == null) {
-					result.rejectValue("groupName", "errors.userNotFound", "User not found");
-				}
-				users.add(user);
+		for (Long memberId : dto.getUserIds()) {
+			User user = userService.findById(memberId);
+			if (user == null) {
+				//result.rejectValue("groupName", "errors.userNotFound", "User not found");
 			}
-		} else {
-			result.rejectValue("groupName", "errors.emptyGroup", "Group cannot be empty");
+			users.add(user);
 		}
-				
-		if (!result.hasErrors()) {
-			try {
-				// create and store a new group
-				groupService.createGroup(dto.getGroupName(), users);
-			} catch (GroupAlreadyExistsException e) {
-				result.rejectValue("groupName", "errors.groupAlreadyExists", "Group Already Exists");
-			}
-		}
-
-		model.addAttribute("users", userService.findAll());
-		model.addAttribute("dto", dto);
-		model.addAttribute("groups", groupService.findAll());
-
-		return "show-all-groups";
+		
+		Group group = groupService.createGroup(dto.getName(), users);
+		return groupModelAssembler.toModel(group);
 	}
 }
