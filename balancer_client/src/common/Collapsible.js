@@ -13,7 +13,7 @@ export default function Collapsible(props) {
                     <span>{ props.title } {open ? <i className="fa fa-angle-up"></i> : <i className="fa fa-angle-down"></i> }</span>
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey="0">
-                    <Card.Body>
+                    <Card.Body className="mt-3 p-0 mb-0">
                         { props.children }
                     </Card.Body>
                 </Accordion.Collapse>

@@ -4,8 +4,12 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
+import com.dam.balancer.model.Group;
 import com.dam.balancer.model.User;
 
+/**
+ * HATEOAS counterpart of {@link Group}.
+ */
 public class GroupModel extends RepresentationModel<GroupModel> {
 	
 	private String name;

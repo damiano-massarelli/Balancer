@@ -61,7 +61,7 @@ export default class MultiElementSelect extends React.Component {
 
         if (this.props.isLoading) {
             return (
-                <div className="text-center">
+                <div className="text-center mb-3">
                     <Spinner animation="grow" />
                 </div>
             );
