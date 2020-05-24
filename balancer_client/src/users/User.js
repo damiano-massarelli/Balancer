@@ -9,7 +9,7 @@ export default class User extends React.Component {
     return (
       <Card className="mb-3">
         <Card.Body>
-          <Card.Title><i className="fa fa-user"></i> { this.props.user.name }</Card.Title>
+          <Card.Title><i className="fa fa-user"></i> { this.props.data.name }</Card.Title>
 
         </Card.Body>
       </Card>

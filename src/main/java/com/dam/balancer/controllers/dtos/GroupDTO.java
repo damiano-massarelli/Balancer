@@ -8,11 +8,11 @@ import javax.validation.constraints.NotNull;
 
 public class GroupDTO {
 	
-	@NotBlank
+	@NotBlank(message = "{com.balancer.messages.group.emtpy-name}")
 	private String name;
 	
-	@NotNull
-	@NotEmpty
+	@NotNull(message = "{com.balancer.messages.group.empty-users}")
+	@NotEmpty(message = "{com.balancer.messages.group.empty-users}")
 	private Collection<Long> userIds;
 
 	public String getName() {

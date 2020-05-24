@@ -50,7 +50,7 @@ public class GroupService {
 	 */
 	public Group createGroup(String groupName, Set<User> users) {
 		if (groupRepository.findByName(groupName) != null) {
-			throw new GroupAlreadyExistsException();
+			throw new GroupAlreadyExistsException("Group '" + groupName + "' already exists");
 		}
 		
 		Group group = new Group(groupName);

@@ -42,11 +42,16 @@ export default class ErrorAlert extends React.Component {
             heading = <Alert.Heading> { this.props.title } </Alert.Heading>;
         }
 
-        return (
+        let text = null;
+        if (this.props.text) {
+            text = <p>{ this.props.text }</p>;
+        }
 
+        return (
             <Alert variant="danger" show={ this.state.show } onClose={ this.onDismiss } dismissible>
                 { heading }
-                <p> { this.props.text } </p>  
+                { text }
+                { this.props.children } 
                 { retryButton }
             </Alert>
         );

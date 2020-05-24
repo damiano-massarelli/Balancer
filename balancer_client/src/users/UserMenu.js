@@ -1,5 +1,6 @@
 import React from 'react';
-import UserList from './UserList';
+import User from './User';
+import ElementList from '../common/ElementList';
 import ErrorAlert from '../errors/ErrorAlert';
 import TextInput from '../common/TextInput';
 import FieldValidationErrors from '../errors/FieldValidationErrors';
@@ -78,7 +79,11 @@ export default class UserMenu extends React.Component {
     }
 
     render() {
-        let userList = <UserList users={ this.state.users } isLoading={ this.state.isLoadingUsers } />
+        let userList = <ElementList as={ User } 
+                            elements={ this.state.users }
+                            isLoading={ this.state.isLoadingUsers }
+                            emptyElementsMessage={ "No users to display at the moment" }
+                            keyExtractor={ user => user.id } />
 
         if (this.state.errorLoadingUsers) { // an error occurred, show it
             userList = <ErrorAlert title="Cannot load users"

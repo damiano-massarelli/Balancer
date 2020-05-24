@@ -38,7 +38,7 @@ export default class GroupInput extends React.Component {
         }
 
         return (
-            <div className="mt-5">
+            <>
                 <TextInput onAdd={ this.onAdd }
                             buttonText="Add Group"
                             isLoading={ this.props.isAddingGroup }
@@ -47,7 +47,7 @@ export default class GroupInput extends React.Component {
                 <Collapsible title="Members">
                     { userSelect }
                 </Collapsible>
-            </div>
+            </>
         );
     }
 }

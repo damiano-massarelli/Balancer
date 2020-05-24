@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,7 @@ public class GroupModelAssembler implements RepresentationModelAssembler<Group, 
 	 
 	@Override
 	public GroupModel toModel(Group group) {
-		GroupModel groupModel = new GroupModel(group.getName(), userAssembler.toCollectionModel( group.getMembers() ));
+		GroupModel groupModel = new GroupModel(group.getId(), group.getName(), userAssembler.toCollectionModel( group.getMembers() ));
 		
 		groupModel.add( linkTo( methodOn(GroupController.class).all() ).withRel("groups") );
 		

@@ -7,16 +7,11 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dam.balancer.controllers.dtos.GroupDTO;
@@ -26,6 +21,7 @@ import com.dam.balancer.model.representational.GroupModel;
 import com.dam.balancer.model.representational.GroupModelAssembler;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
+import com.dam.balancer.services.exceptions.NoSuchUserException;
 
 @CrossOrigin
 @RestController
@@ -54,7 +50,7 @@ public class GroupController {
 		for (Long memberId : dto.getUserIds()) {
 			User user = userService.findById(memberId);
 			if (user == null) {
-				//result.rejectValue("groupName", "errors.userNotFound", "User not found");
+				throw new NoSuchUserException("Creating a group with inexistent user, that's weird!");
 			}
 			users.add(user);
 		}

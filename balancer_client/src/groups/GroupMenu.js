@@ -4,6 +4,8 @@ import UserUtils from '../users/UserUtils';
 import GroupUtils from './GroupUtils';
 import ErrorAlert from '../errors/ErrorAlert';
 import FieldValidationErrors from '../errors/FieldValidationErrors';
+import ElementList from '../common/ElementList';
+import Group from './Group';
 
 export default class GroupMenu extends React.Component {
 
@@ -69,9 +71,9 @@ export default class GroupMenu extends React.Component {
 
     render() {
         let newGroupError = null;
-
         if (this.state.errorAddingGroup) {
             const error = this.state.errorAddingGroup;
+            console.log(error);
             if (error.generic) {
                 newGroupError = <ErrorAlert text={ error.generic } />;
             }
@@ -80,16 +82,26 @@ export default class GroupMenu extends React.Component {
             }
         }
 
+        let groupList = <ElementList as={ Group } 
+                            elements={ this.state.groups }
+                            isLoading={ false }
+                            emptyElementsMessage={ "No groups to display at the moment" }
+                            keyExtractor={ group => group.id } />
+
         return (
-            <>
-                <GroupInput onAdd={ this.addGroup }
-                        isLoadingUsers={ this.state.isLoadingUsers }
-                        users={ this.state.users }
-                        isAddingGroup={ this.state.isAddingGroup }
-                        errorLoadingUsers={ this.state.errorLoadingUsers }
-                        reloadUsers={ this.loadUsers } />
+            <div className="mt-5">
+                <div className="mb-3">
+                    <GroupInput onAdd={ this.addGroup }
+                            isLoadingUsers={ this.state.isLoadingUsers }
+                            users={ this.state.users }
+                            isAddingGroup={ this.state.isAddingGroup }
+                            errorLoadingUsers={ this.state.errorLoadingUsers }
+                            reloadUsers={ this.loadUsers } />
+                </div>
                 { newGroupError }
-            </>
+                { groupList }
+                
+            </div>
         );
     }
 

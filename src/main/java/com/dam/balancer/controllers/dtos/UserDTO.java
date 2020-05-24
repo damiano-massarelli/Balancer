@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
  */
 public class UserDTO {
 
-	@NotBlank
+	@NotBlank(message = "{com.balancer.messages.user.empty-name}")
 	private String name;
 
 	public String getName() {

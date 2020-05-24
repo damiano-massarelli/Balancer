@@ -6,8 +6,13 @@ export default function FieldValidationErrors(props) {
         return null;
     }
 
-    const alerts = props.errors.map(error => <ErrorAlert key={ error.fieldName }
-                                                         text={ `${error.fieldName} ${error.errorMessage}`  } />);
+    const errorElements = props.errors.map(error => <li key={ error.fieldName }>{ error.errorMessage}</li>);
 
-    return alerts;
+    return (
+        <ErrorAlert title="Ops">
+            <ul>
+                { errorElements }
+            </ul>
+        </ErrorAlert>
+    );
 }
