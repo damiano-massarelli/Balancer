@@ -1,6 +1,28 @@
 import { GROUPS_API_PATH } from '../config';
 
 export default class GroupUtils {
+    static async getGroups() {
+        let response = null;
+        try {
+            response = await fetch(GROUPS_API_PATH);
+        }
+        catch (e) {
+            return { groups:[], errorLoadingGroups: true };
+            
+        }
+
+        let resultState = { groups:[], errorLoadingUsers: true };
+        if (response.ok) { 
+            const data = await response.json();
+            resultState = {
+                groups: data._embedded ? data._embedded.groupModelList : [], 
+                errorLoadingGroups: false
+            };
+        }
+
+        return resultState;
+    }
+
     static async postGroup(groupDTO) {
         let response = null;
         try {

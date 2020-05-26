@@ -11,7 +11,7 @@ export default class UserUtils {
             
         }
 
-        let resultState = null;
+        let resultState = { users:[], errorLoadingUsers: true };
         if (response.ok) { 
             const data = await response.json();
 
@@ -19,9 +19,6 @@ export default class UserUtils {
                 users: data._embedded ? data._embedded.userList : [], 
                 errorLoadingUsers: false
             };
-        }
-        else {
-            return { users:[], errorLoadingUsers: true };
         }
 
         return resultState;

@@ -15,13 +15,16 @@ export default class GroupMenu extends React.Component {
         this.state = {
             users: [],
             groups: [],
+            isLoadingGroups: false,
             isLoadingUsers: false,
+            errorLoadingGroups: false,
             errorLoadingUsers: false,
             isAddingGroup: false,
             errorAddingGroup: null
         };
 
         this.loadUsers = this.loadUsers.bind(this);
+        this.loadGroups = this.loadGroups.bind(this);
         this.addGroup = this.addGroup.bind(this);
     }   
 
@@ -53,6 +56,15 @@ export default class GroupMenu extends React.Component {
         this.setState( state );
     }
 
+    async loadGroups() {
+        this.setState({ groups: [], isLoadingGroups: true, errorLoadingGroups: false });
+
+        const result = await GroupUtils.getGroups();
+
+        Object.assign(result, {isLoadingGroups: false});
+        this.setState(result);
+    }
+
     /**
      * Loads users from server and updates the list
      */
@@ -67,6 +79,7 @@ export default class GroupMenu extends React.Component {
 
     componentDidMount() {
         this.loadUsers();
+        this.loadGroups();
     }
 
     render() {
@@ -84,9 +97,14 @@ export default class GroupMenu extends React.Component {
 
         let groupList = <ElementList as={ Group } 
                             elements={ this.state.groups }
-                            isLoading={ false }
+                            isLoading={ this.state.isLoadingGroups }
                             emptyElementsMessage={ "No groups to display at the moment" }
                             keyExtractor={ group => group.id } />
+        if (this.state.errorLoadingGroups) {
+            groupList = <ErrorAlert title="Cannot load groups"
+                                    text="The service is temporarily not available"
+                                    onRetry= { this.loadGroups } />
+        }
 
         return (
             <div className="mt-5">
