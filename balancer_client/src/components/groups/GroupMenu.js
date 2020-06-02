@@ -47,8 +47,7 @@ export default class GroupMenu extends React.Component {
             Object.assign(state, { errorAddingGroup: result.errorAddingGroup });
         }
         else { // everything ok
-            const groups = this.state.groups.splice();
-            groups.push(result.group);
+            const groups = [result.group, ...this.state.groups];
             console.log(groups);
             Object.assign(state, { groups });
         }
@@ -86,7 +85,6 @@ export default class GroupMenu extends React.Component {
         let newGroupError = null;
         if (this.state.errorAddingGroup) {
             const error = this.state.errorAddingGroup;
-            console.log(error);
             if (error.generic) {
                 newGroupError = <ErrorAlert text={ error.generic } />;
             }

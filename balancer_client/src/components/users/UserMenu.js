@@ -2,10 +2,10 @@ import React from 'react';
 import User from './User';
 import ElementList from '../common/ElementList';
 import ErrorAlert from '../errors/ErrorAlert';
-import TextInput from '../common/TextInput';
+import TextInput from '../input/TextInput';
 import FieldValidationErrors from '../errors/FieldValidationErrors';
 import UserUtils from './UserUtils';
-import { USER_API_PATH } from '../config';
+import { USER_API_PATH } from '../../config';
 
 export default class UserMenu extends React.Component {
 
