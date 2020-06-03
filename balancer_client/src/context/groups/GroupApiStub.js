@@ -1,29 +1,36 @@
 import { GROUPS_API_PATH } from '../../config';
 
-export default class GroupUtils {
-    static async getGroups() {
+export default class GroupApiStub {
+    static async get() {
+        let result = {groups: [], errors: {generic: "The service is temporarily unavailable"}};
+
         let response = null;
         try {
             response = await fetch(GROUPS_API_PATH);
         }
-        catch (e) {
-            return { groups:[], errorLoadingGroups: true };
-            
+        catch (_) {
+            return result;   
         }
 
-        let resultState = { groups:[], errorLoadingUsers: true };
         if (response.ok) { 
             const data = await response.json();
-            resultState = {
+            result = {
                 groups: data._embedded ? data._embedded.groupModelList : [], 
-                errorLoadingGroups: false
+                errors: null
             };
         }
 
-        return resultState;
+        return result;
     }
 
-    static async postGroup(groupDTO) {
+    static async post(groupName, members) {
+        const groupDto = {
+            name: groupName,
+            userIds: members.map(user => user.id)
+        };
+
+        let result = { group: null, errors: {"generic": "The service is temporarily unavailable"} };
+
         let response = null;
         try {
             response = await fetch(GROUPS_API_PATH, {
@@ -32,23 +39,21 @@ export default class GroupUtils {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(groupDTO)
+                body: JSON.stringify(groupDto)
             });
         }
-        catch (e) {
-            return { errorAddingGroup: { generic: "The service is temporarily unavailable" } };
+        catch (_) {
+            return result;
         }
 
         const data = await response.json();
-        const result = {
-            group: null,
-            errorAddingGroup: null
-        };
         if (response.ok) {
             result.group = data;
+            console.log(result);
+            result.errors = null;
         }
         else if (response.status === 400) { // bad request, error details are stored in the response data
-            result.errorAddingGroup = data;
+            result.errors = data;
         }
 
         return result;
