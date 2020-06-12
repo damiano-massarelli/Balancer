@@ -9,7 +9,7 @@ import { UserContext } from '../../context/users/UserState';
 export default function UserMenu(props) {
 
     const context = useContext(UserContext);
-
+    console.log(context);
     let userList = <ElementList as={ User } 
                         elements={ context.users }
                         isLoading={ context.isLoading }

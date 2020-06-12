@@ -73,11 +73,6 @@ public class ExpenseController {
 		
 		final User creditor = userService.findById(dto.getCreditor());
 		
-		if (creditor == null) {
-			result.rejectValue("creditor", "errors.cannotFindCreditor", "Creditor not set");
-			return null;
-		}
-		
 		Expense expense = new Expense(dto.getTitle(), creditor, total, new Date());
 
 		Set<Long> debtors = new HashSet<Long>(); 

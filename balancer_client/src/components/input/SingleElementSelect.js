@@ -11,10 +11,10 @@ function RowElement(props) {
                 <Form.Check
                     inline
                     custom
-                    name="multiElementSelectInner"
+                    name="singleElementSelectInner"
+                    onChange={ () => props.onChange(props.element) }
                     label={ innerElement }
-                    type="checkbox"
-                    onChange={ event => props.onChange(event.target.checked, props.element) }
+                    type="radio"
                     id={ chosenId + "_innerRowElement" + props.innerId }
                 />
             </td>
@@ -23,23 +23,15 @@ function RowElement(props) {
 }
 
  /**
-  * Allows the user to select multiple elements from a list.
+  * Allows the user to select a single element from a list.
   * An additional element can be passed using 'as' to decide how
   * elements should be displayed.
   */
-export default function MultiElementSelect(props) {
+export default function SingleElementSelect(props) {
 
-    const onSelect = (previousElements, selected, element) => {
-        if (selected) {
-            return [...previousElements, element];
-        }
-        else {
-            // remove the deselected element
-            return previousElements.filter(e => e !== element);
-        }
-    }
+    const onSelect = (previousElement, element) => [element];
 
     return <ElementSelect rowComponent={ RowElement }
-                    onSelect={ onSelect }
-                    { ...props } />;
+                        onSelect={ onSelect }
+                        { ...props } />;
 }

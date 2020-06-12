@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dam.balancer.model.User;
 import com.dam.balancer.repos.UserRepository;
+import com.dam.balancer.services.exceptions.NoSuchUserException;
 import com.dam.balancer.services.exceptions.UserAlreadyExistsException;
 
 @Service
@@ -39,7 +40,9 @@ public class UserService {
 	 * @return the corresponding User
 	 */
 	public User findById(Long id) {
-		return userRepository.findById(id).orElse(null);
+		return userRepository.findById(id).orElseThrow(() -> { 
+			return new NoSuchUserException("Cannot find user with id " + id);
+		});
 	}
 	
 	/**

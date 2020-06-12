@@ -49,9 +49,6 @@ public class GroupController {
 		
 		for (Long memberId : dto.getUserIds()) {
 			User user = userService.findById(memberId);
-			if (user == null) {
-				throw new NoSuchUserException("Creating a group with inexistent user, that's weird!");
-			}
 			users.add(user);
 		}
 		
