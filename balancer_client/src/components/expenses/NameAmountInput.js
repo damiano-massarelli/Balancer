@@ -12,7 +12,7 @@ export default function TextInput(props) {
 
     const [name, setName] = useState("");
     const [amount, setAmount] = useState("");
-    
+
     let loadingSpinner = null;
     if (props.isLoading) {
         loadingSpinner = <Spinner animation="grow" size="sm" />
@@ -20,22 +20,22 @@ export default function TextInput(props) {
 
     return (
         <Form onSubmit={e => {
-                    e.preventDefault();
-                    props.onAdd(name, parseFloat(amount));
-                }
-            }>
+            e.preventDefault();
+            props.onAdd(name, parseFloat(amount));
+        }
+        }>
             <InputGroup>
-                <FormControl placeholder={ "Name" }
-                                onChange={ event => setName(event.target.value) }
-                                value={ name } required />
-                <FormControl placeholder={ "Amount" }
-                                onChange={ event => setAmount(event.target.value) }
-                                value={ amount } required />                
+                <FormControl placeholder={"Name"}
+                    onChange={event => setName(event.target.value)}
+                    value={name} required />
+                <FormControl placeholder={"Amount"}
+                    onChange={event => setAmount(event.target.value)}
+                    value={amount} required />
                 <InputGroup.Prepend>
                     <Button variant="outline-secondary"
-                            type="submit"
-                            disabled={ props.isLoading }>
-                        { props.buttonText } { loadingSpinner }
+                        type="submit"
+                        disabled={props.isLoading}>
+                        {props.buttonText} {loadingSpinner}
                     </Button>
                 </InputGroup.Prepend>
             </InputGroup>

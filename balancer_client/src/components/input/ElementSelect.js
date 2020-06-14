@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Spinner from 'react-bootstrap/Spinner';
 
@@ -12,19 +12,19 @@ export default function ElementSelect(props) {
     const [selectedElements, setSelectedElements] = useState([]);
 
     const { onChange } = props;
-    useEffect(() => { onChange(selectedElements) }, [selectedElements, onChange]);
 
     const onChangeCallback = (...params) => {
         const updatedElements = props.onSelect(selectedElements, ...params);
         setSelectedElements(updatedElements);
+        onChange(updatedElements);
     }
 
     const rows = props.elements.map(element => React.createElement(props.rowComponent, {
+        ...props,
         key: props.keyExtractor(element),
         element,
         innerId: props.keyExtractor(element),
         onChange: onChangeCallback,
-        ...props,
     }));
 
     if (props.isLoading) {
@@ -35,8 +35,20 @@ export default function ElementSelect(props) {
         );
     }
 
+    let header = null;
+    if (props.title) {
+        header = (
+            <thead>
+                <tr>
+                    <th>{ props.title }</th>
+                </tr>
+            </thead>
+        );
+    }
+
     return (
-        <Table striped bordered hover>
+        <Table striped hover className="mb-0">
+            { header }
             <tbody>
                 { rows }
             </tbody>

@@ -12,21 +12,21 @@ function RowElement(props) {
                     inline
                     custom
                     name="multiElementSelectInner"
-                    label={ innerElement }
+                    label={innerElement}
                     type="checkbox"
-                    onChange={ event => props.onChange(event.target.checked, props.element) }
-                    id={ chosenId + "_innerRowElement" + props.innerId }
+                    onChange={event => props.onChange(event.target.checked, props.element)}
+                    id={chosenId + "_innerRowElement" + props.innerId}
                 />
             </td>
         </tr>
     );
 }
 
- /**
-  * Allows the user to select multiple elements from a list.
-  * An additional element can be passed using 'as' to decide how
-  * elements should be displayed.
-  */
+/**
+ * Allows the user to select multiple elements from a list.
+ * An additional element can be passed using 'as' to decide how
+ * elements should be displayed.
+ */
 export default function MultiElementSelect(props) {
 
     const onSelect = (previousElements, selected, element) => {
@@ -39,7 +39,8 @@ export default function MultiElementSelect(props) {
         }
     }
 
-    return <ElementSelect rowComponent={ RowElement }
-                    onSelect={ onSelect }
-                    { ...props } />;
+    return <ElementSelect {...props}
+        rowComponent={RowElement}
+        onSelect={onSelect}
+    />;
 }

@@ -11,7 +11,7 @@ import Spinner from 'react-bootstrap/Spinner';
 export default function TextInput(props) {
 
     const [text, setText] = useState("");
-    
+
     let loadingSpinner = null;
     if (props.isLoading) {
         loadingSpinner = <Spinner animation="grow" size="sm" />
@@ -19,19 +19,19 @@ export default function TextInput(props) {
 
     return (
         <Form onSubmit={e => {
-                e.preventDefault();
-                props.onAdd(text)
-            }
-            }>
+            e.preventDefault();
+            props.onAdd(text)
+        }
+        }>
             <InputGroup>
-                <FormControl placeholder={ props.placeholder }
-                                onChange={ event => setText(event.target.value) }
-                                value={ text } required />
+                <FormControl placeholder={props.placeholder}
+                    onChange={event => setText(event.target.value)}
+                    value={text} required />
                 <InputGroup.Prepend>
                     <Button variant="outline-secondary"
-                            type="submit"
-                            disabled={ props.isLoading }>
-                        { props.buttonText } { loadingSpinner }
+                        type="submit"
+                        disabled={props.isLoading}>
+                        {props.buttonText} {loadingSpinner}
                     </Button>
                 </InputGroup.Prepend>
             </InputGroup>

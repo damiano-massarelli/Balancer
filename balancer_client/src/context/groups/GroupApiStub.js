@@ -49,7 +49,6 @@ export default class GroupApiStub {
         const data = await response.json();
         if (response.ok) {
             result.group = data;
-            console.log(result);
             result.errors = null;
         }
         else if (response.status === 400) { // bad request, error details are stored in the response data

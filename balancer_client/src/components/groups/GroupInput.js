@@ -5,7 +5,7 @@ import ErrorAlert from '../errors/ErrorAlert';
 import Collapsible from '../common/Collapsible';
 
 function UserSelectElement(props) {
-    return <span>{ props.element.name }</span>
+    return <span>{props.element.name}</span>
 }
 
 export default function GroupInput(props) {
@@ -16,27 +16,27 @@ export default function GroupInput(props) {
         props.onAdd(groupName, selectedUsers);
     }
 
-    let userSelect = <MultiElementSelect elements={ props.users }
-                        as={ UserSelectElement }
-                        keyExtractor={ element => element.id }
-                        onChange={ selected => setSelectedUsers(selected) }
-                        isLoading = { props.isLoadingUsers } />
+    let userSelect = <MultiElementSelect elements={props.users}
+        as={UserSelectElement}
+        keyExtractor={element => element.id}
+        onChange={selected => setSelectedUsers(selected)}
+        isLoading={props.isLoadingUsers} />
 
     if (props.errorLoadingUsers) {
         userSelect = <ErrorAlert title="Cannot load users"
-                                text="The service is temporarily not available"
-                                onRetry= { props.reloadUsers } />
+            text="The service is temporarily not available"
+            onRetry={props.reloadUsers} />
     }
 
     return (
         <>
-            <TextInput onAdd={ onAdd }
-                        buttonText="Add Group"
-                        isLoading={ props.isAddingGroup }
-                        placeholder="Group name" />
-            
+            <TextInput onAdd={onAdd}
+                buttonText="Add Group"
+                isLoading={props.isAddingGroup}
+                placeholder="Group name" />
+
             <Collapsible title="Members">
-                { userSelect }
+                {userSelect}
             </Collapsible>
         </>
     );

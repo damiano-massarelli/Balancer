@@ -6,10 +6,17 @@ import ElementList from '../common/ElementList';
 
 export default function ExpenseMenu(props) {
 
+    const onAdd = (name, numericAmount, payerId, userDebtorsIds, userIdToExtra, groupDebtorsIds) => {
+        console.log(name);
+        console.log(numericAmount);
+        console.log(payerId);
+        console.log(userDebtorsIds, userIdToExtra, groupDebtorsIds);
+    };
+
     return (
         <div className="mt-5">
             <div className="mb-3">
-                <ExpenseInput  />
+                <ExpenseInput onAdd={onAdd} />
             </div>
         </div>
     );

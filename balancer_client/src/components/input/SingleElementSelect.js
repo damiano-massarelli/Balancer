@@ -12,26 +12,27 @@ function RowElement(props) {
                     inline
                     custom
                     name="singleElementSelectInner"
-                    onChange={ () => props.onChange(props.element) }
-                    label={ innerElement }
+                    onChange={() => props.onChange(props.element)}
+                    label={innerElement}
                     type="radio"
-                    id={ chosenId + "_innerRowElement" + props.innerId }
+                    id={chosenId + "_innerRowElement" + props.innerId}
                 />
             </td>
         </tr>
     );
 }
 
- /**
-  * Allows the user to select a single element from a list.
-  * An additional element can be passed using 'as' to decide how
-  * elements should be displayed.
-  */
+/**
+ * Allows the user to select a single element from a list.
+ * An additional element can be passed using 'as' to decide how
+ * elements should be displayed.
+ */
 export default function SingleElementSelect(props) {
 
     const onSelect = (previousElement, element) => [element];
 
-    return <ElementSelect rowComponent={ RowElement }
-                        onSelect={ onSelect }
-                        { ...props } />;
+    return <ElementSelect {...props}
+        rowComponent={RowElement}
+        onSelect={onSelect}
+    />;
 }
