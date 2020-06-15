@@ -11,6 +11,7 @@ import com.dam.balancer.model.Group;
 import com.dam.balancer.model.User;
 import com.dam.balancer.repos.GroupRepository;
 import com.dam.balancer.services.exceptions.GroupAlreadyExistsException;
+import com.dam.balancer.services.exceptions.NoSuchGroupException;
 
 @Service
 @Transactional
@@ -22,10 +23,13 @@ public class GroupService {
 	/**
 	 * Gets a group given its id
 	 * @param id the id of the group
-	 * @return the group with the given id, null if it does not exist
+	 * @return the group with the given id
+	 * @throws NoSuchGroupException if there is no {@link Group} with the given id
 	 */
 	public Group getById(Long id) {
-		return groupRepository.findById(id).orElse(null);
+		return groupRepository.findById(id).orElseThrow(() -> {
+			throw new NoSuchGroupException("Cannot find group with id " + id);
+		});
 	}
 	
 	/**

@@ -6,4 +6,6 @@ import com.dam.balancer.model.Expense;
 
 public interface ExpenseRepository extends CrudRepository<Expense, Long> {
 
+	Expense findByTitle(String title);
+	
 }

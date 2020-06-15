@@ -38,6 +38,7 @@ public class UserService {
 	 * Retrieves a {@link User} given its id.
 	 * @param id the id of the user
 	 * @return the corresponding User
+	 * @throws NoSuchUserException if there is no {@link User} with the given id
 	 */
 	public User findById(Long id) {
 		return userRepository.findById(id).orElseThrow(() -> { 

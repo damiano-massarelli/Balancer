@@ -1,4 +1,4 @@
-import { GROUPS_API_PATH } from '../../config';
+import { GROUPS_API_PATH } from './config';
 
 export default class GroupApiStub {
     static async get() {

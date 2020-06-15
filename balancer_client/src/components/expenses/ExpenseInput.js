@@ -60,8 +60,9 @@ export default function ExpenseInput(props) {
             return selectedDebtors.find(debtor => (debtor.type === "group" && debtor.id === group.id));
         }).map(group => group.id);
 
-        const userIdToExtra = selectedDebtors.filter(debtor => debtor.type === "user")
-            .map(debtor => ({ id: debtor.id, extra: debtor.extra }));
+        const userIdToExtra = new Map();
+        selectedDebtors.filter(debtor => debtor.type === "user")
+            .forEach(debtor => userIdToExtra[debtor.id] = debtor.extra);
 
         const payerId = payer ? payer.id : null;
         props.onAdd(name, numericAmount, payerId, userDebtorsIds, userIdToExtra, groupDebtorsIds);
@@ -71,7 +72,7 @@ export default function ExpenseInput(props) {
         <>
             <NameAmountInput onAdd={onAdd}
                 buttonText="Add Expense"
-                isLoading={false} />
+                isLoading={props.isAdding} />
             <Collapsible title="members">
                 <Row>
                     <Col className="pr-0">
@@ -88,7 +89,7 @@ export default function ExpenseInput(props) {
 
                     <Col className="pl-0">
                         <SingleElementSelect id="payerSelect"
-                            title="Payer"
+                            title="Creditor"
                             elements={userContext.users}
                             keyExtractor={element => element.id}
                             onChange={selected => setPayer(selected[0])}

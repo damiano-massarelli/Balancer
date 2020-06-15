@@ -36,6 +36,7 @@ public class ExpenseService {
 	/**
 	 * Adds a new expense.
 	 * @param expense the new expense
+	 * @throws ExpenseAlreadyExistsException if there is already an expense with the given title
 	 */
 	public void addExpense(Expense expense) {
 		expenseRepository.save(expense);
@@ -82,7 +83,7 @@ public class ExpenseService {
 	/**
 	 * Gets the net amount of money for a certain user.
 	 * The amount is positive if the user is a creditor and
-	 * it is negative if s/he is a debtor (overall)/
+	 * it is negative if s/he is a debtor (overall)
 	 * @return the net amount of money for a user
 	 */
 	public float getNetFor(User handle) {

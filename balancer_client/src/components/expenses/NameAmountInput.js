@@ -21,6 +21,10 @@ export default function TextInput(props) {
     return (
         <Form onSubmit={e => {
             e.preventDefault();
+            let amountValue = parseFloat(amount);
+            if (isNaN(amountValue)) {
+                amountValue = 0;
+            }
             props.onAdd(name, parseFloat(amount));
         }
         }>
@@ -30,7 +34,8 @@ export default function TextInput(props) {
                     value={name} required />
                 <FormControl placeholder={"Amount"}
                     onChange={event => setAmount(event.target.value)}
-                    value={amount} required />
+                    value={amount}
+                    type="number" required />
                 <InputGroup.Prepend>
                     <Button variant="outline-secondary"
                         type="submit"

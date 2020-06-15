@@ -1,7 +1,8 @@
-package com.dam.balancer.services.exceptions;
+package com.dam.balancer.services.advices;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,12 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class GroupAlreadyExistsAdvice {
+public class NoSuchElementAdvice {
 
 	@ResponseBody
-	@ExceptionHandler(GroupAlreadyExistsException.class)
+	@ExceptionHandler(NoSuchElementException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	Map<String, String> groupAlreadyExistHandle(GroupAlreadyExistsException exception) {
+	Map<String, String> noSuchUsersHandle(NoSuchElementException exception) {
 		Map<String, String> error = new HashMap<>();
 		error.put("generic", exception.getMessage());
 		

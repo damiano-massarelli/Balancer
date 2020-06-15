@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import {reducer, actionTypes} from './UserReducer';
-import UserApiStub from './UserApiStub';
+import UserApiStub from '../../apiStubs/UserApiStub';
 
 // initial state
 const initialState = {

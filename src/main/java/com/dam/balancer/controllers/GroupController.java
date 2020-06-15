@@ -21,7 +21,6 @@ import com.dam.balancer.model.representational.GroupModel;
 import com.dam.balancer.model.representational.GroupModelAssembler;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
-import com.dam.balancer.services.exceptions.NoSuchUserException;
 
 @CrossOrigin
 @RestController

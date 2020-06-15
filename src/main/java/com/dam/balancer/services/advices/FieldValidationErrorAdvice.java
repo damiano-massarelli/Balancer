@@ -1,4 +1,4 @@
-package com.dam.balancer.services.exceptions;
+package com.dam.balancer.services.advices;
 
 import java.util.HashMap;
 import java.util.List;

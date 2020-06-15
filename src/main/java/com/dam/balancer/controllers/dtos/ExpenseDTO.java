@@ -8,21 +8,19 @@ import javax.validation.constraints.NotNull;
 
 public class ExpenseDTO {
 	
-	@NotBlank
+	@NotBlank(message = "{com.balancer.messages.expense.emtpy-name}")
 	private String title;
 	
-	@NotNull
+	@NotNull(message = "{com.balancer.messages.expense.empty-creditor}")
 	private Long creditor;
 	
-	@NotNull
+	@NotNull(message = "{com.balancer.messages.expense.null-amount}")
 	private Float amount;
 	
-	@NotNull
 	private List<Long> debtors;
 	
 	private List<Long> groups;
 	
-	@NotNull
 	private Map<Long, Float> debtorToExtra;
 
 	public String getTitle() {

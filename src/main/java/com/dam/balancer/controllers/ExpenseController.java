@@ -4,33 +4,37 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dam.balancer.controllers.dtos.ExpenseDTO;
 import com.dam.balancer.model.Expense;
 import com.dam.balancer.model.Group;
-import com.dam.balancer.model.Transaction;
 import com.dam.balancer.model.User;
+import com.dam.balancer.model.representational.TransactionModel;
+import com.dam.balancer.model.representational.TransactionModelAssembler;
 import com.dam.balancer.services.ExpenseService;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
+import com.dam.balancer.services.exceptions.BadExpenseException;
 
-@Controller
-@RequestMapping(path = "/")
+@CrossOrigin
+@RestController
+@RequestMapping(path = "/api/expenses")
 public class ExpenseController {
 
 	static float round(float value) {
@@ -46,13 +50,10 @@ public class ExpenseController {
 	@Autowired
 	private GroupService groupService;
 	
-	private void populateModel(Model model) {
-		model.addAttribute("users", userService.findAll());
-		model.addAttribute("groups", groupService.findAll());
-		model.addAttribute("transactions", expenseService.getBalance());
-	}
+	@Autowired
+	private TransactionModelAssembler transactionModelAssembler;
 	
-	private Expense createExpense(ExpenseDTO dto, BindingResult result) {
+	private Expense createExpense(ExpenseDTO dto) {
 		// set debtors and groups to empty list if they are not set
 		if (dto.getDebtors() == null) {
 			dto.setDebtors(new ArrayList<Long>());
@@ -61,10 +62,13 @@ public class ExpenseController {
 			dto.setGroups(new ArrayList<Long>());
 		}
 		
+		if (dto.getAmount() < 0) {
+			throw new BadExpenseException("Amount cannot be negative");
+		}
+		
 		// at least one debtor or group must be set
 		if (dto.getDebtors().size() == 0 && dto.getGroups().size() == 0) {
-			result.rejectValue("debtors", "errors.noDebtors", "No debtors added");
-			return null;
+			throw new BadExpenseException("Select at least a debtor for this expense");
 		}
 		
 		// total expense, round to 2 decimals
@@ -77,23 +81,22 @@ public class ExpenseController {
 
 		Set<Long> debtors = new HashSet<Long>(); 
 		
+		Map<Long, Float> debtorToExtra = dto.getDebtorToExtra();
+		if (debtorToExtra == null) {
+			debtorToExtra = new HashMap<Long, Float>();
+		}
 		for (final Long debtor : dto.getDebtors()) {
 			netTotal -= Optional.ofNullable(dto.getDebtorToExtra().get(debtor)).orElse(0.0f);
 			debtors.add(debtor);
 		}
 				
 		if (netTotal < 0) {
-			result.rejectValue("debtorToExtra", "errors.tooManyExtras", "Too many extras");
-			return null;
+			throw new BadExpenseException("The sum of extras is greater than the expense amount");
 		}
 		
 		// add users from groups
 		for (final Long groupId : dto.getGroups()) {
 			Group group = groupService.getById(groupId);
-			if (group == null) {
-				result.rejectValue("groups", "errors.groupNotFount", "Group does not exist");
-				return null;
-			}
 			
 			group.getMembers().stream().map(User::getId).forEach(debtors::add);
 		}
@@ -102,10 +105,6 @@ public class ExpenseController {
 		
 		for (final Long debtorId : debtors) {
 			final User debtor = userService.findById(debtorId);
-			if (debtor == null) {
-				result.rejectValue("debtors", "errors.cannotFindDebtor", "Cannot find debtor");
-				return null;
-			}
 			
 			if (!debtor.equals(creditor)) {
 				final float extra = Optional.ofNullable(dto.getDebtorToExtra().get(debtorId)).orElse(0.0f);
@@ -116,15 +115,15 @@ public class ExpenseController {
 		return expense;
 	}
 	
-	@GetMapping(path = "/")
+	/*@GetMapping(path = "/")
 	public String getExpenseMainPage(Model model) {
-		populateModel(model);
+		//populateModel(model);
 		model.addAttribute("dto", new ExpenseDTO());
 
 		return "expenses";
-	}
+	}*/
 	
-	@GetMapping(path = "/expenses/payback")
+	/*@GetMapping(path = "/expenses/payback")
 	public String payback(Model model, @RequestParam Long payerId, Long receiverId, Float amount) {
 		User payer = userService.findById(payerId);
 		User receiver = userService.findById(receiverId);
@@ -141,28 +140,19 @@ public class ExpenseController {
 		}
 		
 		model.addAttribute("dto", new ExpenseDTO());
-		populateModel(model);
+		//populateModel(model);
 		
 		return "expenses";
+	}*/
+	
+	@PostMapping(path = "/")
+	public CollectionModel<TransactionModel> add(@Valid @RequestBody ExpenseDTO dto) {
+		Expense expense = createExpense(dto);
+		this.expenseService.addExpense(expense);
+		return transactionModelAssembler.toCollectionModel(expenseService.getBalance());
 	}
 	
-	@PostMapping(path = "/expenses/doAdd")
-	public String addExpense(Model model, @ModelAttribute(name = "dto") @Valid ExpenseDTO dto, BindingResult result) {
-		model.addAttribute("dto", dto); // keep this dto to report errors
-		
-		if (!result.hasErrors()) {
-			Expense expense = createExpense(dto, result);
-			if (expense != null) {
-				this.expenseService.addExpense(expense);
-			}
-		}
-				
-		populateModel(model);
-		
-		return "expenses";
-	}
-	
-	@GetMapping(path = "/history/")
+	/*@GetMapping(path = "/history/")
 	public String showHistory(Model model) {
 		model.addAttribute("expenses", expenseService.getExpenses());
 		
@@ -176,5 +166,5 @@ public class ExpenseController {
 		model.addAttribute("expenses", expenseService.getExpenses());
 		
 		return "show-history";
-	}
+	}*/
 }

@@ -1,4 +1,4 @@
-import { USER_API_PATH } from '../../config';
+import { USER_API_PATH } from './config';
 
 export default class UserApiStub {
     static async get() {
