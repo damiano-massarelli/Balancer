@@ -3,7 +3,11 @@ import Spinner from 'react-bootstrap/Spinner';
 
 export default function ElementList(props) {
 
-    let elementToDisplay = props.elements.map(elementData => React.createElement(props.as, { key: props.keyExtractor(elementData), data: elementData }));
+    let elementToDisplay = props.elements.map(elementData => React.createElement(props.as, {
+        ...props,
+        key: props.keyExtractor(elementData),
+        data: elementData,
+    }));
 
     if (props.isLoading) { // loading, show spinner
         elementToDisplay = (

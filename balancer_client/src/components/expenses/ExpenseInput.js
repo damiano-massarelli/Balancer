@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import TextInput from '../input/TextInput';
-import MultiElementSelect from '../input/MultiElementSelect';
 import ErrorAlert from '../errors/ErrorAlert';
 import Collapsible from '../common/Collapsible';
 

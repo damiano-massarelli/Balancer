@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dam.balancer.controllers.dtos.ExpenseDTO;
+import com.dam.balancer.controllers.dtos.TransactionDTO;
 import com.dam.balancer.model.Expense;
 import com.dam.balancer.model.Group;
+import com.dam.balancer.model.Transaction;
 import com.dam.balancer.model.User;
 import com.dam.balancer.model.representational.TransactionModel;
 import com.dam.balancer.model.representational.TransactionModelAssembler;
@@ -31,6 +34,7 @@ import com.dam.balancer.services.ExpenseService;
 import com.dam.balancer.services.GroupService;
 import com.dam.balancer.services.UserService;
 import com.dam.balancer.services.exceptions.BadExpenseException;
+import com.dam.balancer.services.exceptions.NoSuchTransactionException;
 
 @CrossOrigin
 @RestController
@@ -123,32 +127,37 @@ public class ExpenseController {
 		return "expenses";
 	}*/
 	
-	/*@GetMapping(path = "/expenses/payback")
-	public String payback(Model model, @RequestParam Long payerId, Long receiverId, Float amount) {
-		User payer = userService.findById(payerId);
-		User receiver = userService.findById(receiverId);
+	@DeleteMapping(path = "/transactions/")
+	public void payback(@RequestBody TransactionDTO transaction) {
+		User debtor = userService.findById(transaction.getFrom());
+		User creditor = userService.findById(transaction.getTo());
+		float amount = round(transaction.getAmount());
 		
 		// security check: does the transaction exist?
-		Transaction paymentTransaction = new Transaction(receiver, payer, amount);
+		Transaction paymentTransaction = new Transaction(debtor, creditor, amount);
 		boolean exists = expenseService.getBalance().contains(paymentTransaction);
 				
 		// if payerId or receiverId do not exist the transaction won't be found as they are null
 		if (exists) {
-			Expense paybackExpense = new Expense("Payback", receiver, amount, new Date());
-			paybackExpense.addDebtor(payer, round(amount));
+			Expense paybackExpense = new Expense("Payback", debtor, amount, new Date());
+			paybackExpense.addDebtor(creditor, amount);
 			expenseService.addExpense(paybackExpense);
 		}
-		
-		model.addAttribute("dto", new ExpenseDTO());
-		//populateModel(model);
-		
-		return "expenses";
-	}*/
+		else {
+			throw new NoSuchTransactionException("Trying to payback nonexistent transaction");
+		}
+
+	}
 	
 	@PostMapping(path = "/")
 	public CollectionModel<TransactionModel> add(@Valid @RequestBody ExpenseDTO dto) {
 		Expense expense = createExpense(dto);
 		this.expenseService.addExpense(expense);
+		return transactionModelAssembler.toCollectionModel(expenseService.getBalance());
+	}
+	
+	@GetMapping("/transactions/")
+	public CollectionModel<TransactionModel> allTransaction() {
 		return transactionModelAssembler.toCollectionModel(expenseService.getBalance());
 	}
 	

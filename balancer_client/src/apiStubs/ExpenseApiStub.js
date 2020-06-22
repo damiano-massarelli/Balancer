@@ -1,49 +1,61 @@
 import { EXPSENSES_API_PATH } from './config';
 
-export default class UserApiStub {
-    static async _getData(path) {
-        let result = { data: null, errors: {"generic": "The service is temporarily unavailable"} };
-        
+export default class ExpenseApiStub {
+    static async _request(uri, method, dataToSend) {
+        let result = { data: null, errors: { "generic": "The service is temporarily unavailable" } };
+
         let response = null;
         try {
-            response = await fetch(path);
+            response = await fetch(uri, {
+                method,
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend)
+            });
         }
         catch (_) {
             return result;
         }
 
-        if (response.ok) { 
-            const data = await response.json();
+        let data = null;
+        try {
+            data = await response.json();
+        }
+        catch (_) { }
 
+        if (response.ok) {
             result = {
-                data, 
+                data,
                 errors: null
             };
+        }
+        else if (response.status === 400) {
+            result = { data: null, errors: data };
         }
 
         return result;
     }
 
     static async getTransactions() {
-        let result = { users:[], errors: {"generic": "The service is temporarily unavailable"} };
-        let response = null;
-        try {
-            response = await fetch(EXPSENSES_API_PATH);
+        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + "transactions/", 'GET');
+        let transactions = null;
+        if (result.data) {
+            transactions = result.data._embedded ? result.data._embedded.transactionModelList : [];
         }
-        catch (_) {
-            return result;
-        }
+        return { transactions, errors: result.errors };
+    }
 
-        if (response.ok) { 
-            const data = await response.json();
+    static async deleteTransaction(fromId, toId, amount) {
+        const transactionDTO = {
+            from: fromId,
+            to: toId,
+            amount
+        };
 
-            result = {
-                users: data._embedded ? data._embedded.userList : [], 
-                errors: null
-            };
-        }
-
-        return result;
+        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + "transactions/", 'DELETE', transactionDTO);
+        return { data: null, errors: result.errors };
     }
 
     static async post(title, amount, creditor, debtors, groups, debtorToExtra) {
@@ -56,30 +68,12 @@ export default class UserApiStub {
             debtorToExtra
         };
 
-        let result = {transactions: null, errors: { generic: "The service is temporarily unavailable" }};
-        let response = null;
-        try {
-            response = await fetch(EXPSENSES_API_PATH, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(expenseDTO)
-            });
-        }
-        catch (_) {
-            return result;
+        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH, 'POST', expenseDTO);
+        let transactions = null;
+        if (result.data) {
+            transactions = result.data._embedded ? result.data._embedded.transactionModelList : [];
         }
 
-        const data = await response.json();
-        if (response.ok) { // response is ok, data contains a user
-            result = {transactions: data._embedded.transactionModelList, errors: null};
-        }
-        else if (response.status === 400) { // bad request, error details are stored in the response data
-            result = {transactions: null, errors: data};
-        }
-
-        return result;
+        return { transactions, errors: result.errors };
     }
 }
