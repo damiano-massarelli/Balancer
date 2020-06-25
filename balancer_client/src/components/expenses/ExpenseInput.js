@@ -3,7 +3,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ErrorAlert from '../errors/ErrorAlert';
 import Collapsible from '../common/Collapsible';
-
 import NameAmountInput from './NameAmountInput';
 import DebtorSelect from './DebtorSelect';
 import SingleElementSelect from '../input/SingleElementSelect';

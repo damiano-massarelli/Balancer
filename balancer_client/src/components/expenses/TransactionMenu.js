@@ -6,11 +6,28 @@ import ElementList from '../common/ElementList';
 import ExpenseApiStub from '../../apiStubs/ExpenseApiStub';
 import Transaction from './Transaction'
 
+const decorateTransaction = (transactions) => {
+    return transactions.map((transaction, i) => ({ ...transaction, id: i }));
+}
+
 export default function TransactionMenu(props) {
 
-    const [expenses, setExpenses] = useState([]);
-    const [isLoadingExpenses, setIsLoadingExpenses] = useState(false);
-    const [errors, setErrors] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [isAdding, setIsAdding] = useState(false);
+    const [errors, setErrors] = useState(null);
+    const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
+
+    const onAdd = async (name, numericAmount, creditorId, userDebtorsIds, userIdToExtra, groupDebtorsIds) => {
+        setErrors(null);
+        setIsAdding(true);
+        const result = await ExpenseApiStub.post(name, numericAmount, creditorId,
+            userDebtorsIds, groupDebtorsIds, userIdToExtra);
+        setIsAdding(false);
+        setErrors(result.errors);
+        if (!result.errors) {
+            setTransactions(decorateTransaction(result.transactions));
+        }
+    };
 
     const onTransactionDeleted = (transactionId) => {
         setTransactions(transactions.filter(transaction => transaction.id !== transactionId));
@@ -18,7 +35,7 @@ export default function TransactionMenu(props) {
 
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoadingExpenses(true);
+            setIsLoadingTransactions(true);
             const result = await ExpenseApiStub.getTransactions();
             console.log(result);
             if (result.errors) {
@@ -29,28 +46,34 @@ export default function TransactionMenu(props) {
             }
             setErrors(result.errors);
 
-            setIsLoadingExpenses(false);
+            setIsLoadingTransactions(false);
         };
         fetchData();
-    }, [setTransactions, setIsLoadingExpenses, setErrors]);
+    }, [setTransactions, setIsLoadingTransactions, setErrors]);
 
     let errorElement = null;
     if (errors) {
         if (errors.generic) {
             errorElement = <ErrorAlert text={errors.generic} />;
         }
+        else if (errors.fieldErrors) {
+            errorElement = <FieldValidationErrors errors={errors.fieldErrors} />;
+        }
     }
 
     return (
         <div className="mt-5">
+            <div className="mb-3">
+                <ExpenseInput onAdd={onAdd}
+                    isAdding={isAdding} />
+            </div>
+            {errorElement}
             <ElementList as={Transaction}
                 elements={transactions}
-                isLoading={isLoadingExpenses}
+                isLoading={isLoadingTransactions}
                 onTransactionDeleted={onTransactionDeleted}
                 emptyElementsMessage={"No transactions to display at the moment"}
                 keyExtractor={transaction => transaction.id} />
-
-            {errorElement}
         </div>
     );
 }

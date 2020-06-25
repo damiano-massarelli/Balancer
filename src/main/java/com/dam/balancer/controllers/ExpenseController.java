@@ -28,6 +28,8 @@ import com.dam.balancer.model.Expense;
 import com.dam.balancer.model.Group;
 import com.dam.balancer.model.Transaction;
 import com.dam.balancer.model.User;
+import com.dam.balancer.model.representational.ExpenseModel;
+import com.dam.balancer.model.representational.ExpenseModelAssembler;
 import com.dam.balancer.model.representational.TransactionModel;
 import com.dam.balancer.model.representational.TransactionModelAssembler;
 import com.dam.balancer.services.ExpenseService;
@@ -56,6 +58,9 @@ public class ExpenseController {
 	
 	@Autowired
 	private TransactionModelAssembler transactionModelAssembler;
+	
+	@Autowired
+	private ExpenseModelAssembler expenseModelAssembler;
 	
 	private Expense createExpense(ExpenseDTO dto) {
 		// set debtors and groups to empty list if they are not set
@@ -118,14 +123,7 @@ public class ExpenseController {
 		
 		return expense;
 	}
-	
-	/*@GetMapping(path = "/")
-	public String getExpenseMainPage(Model model) {
-		//populateModel(model);
-		model.addAttribute("dto", new ExpenseDTO());
 
-		return "expenses";
-	}*/
 	
 	@DeleteMapping(path = "/transactions/")
 	public void payback(@RequestBody TransactionDTO transaction) {
@@ -149,6 +147,11 @@ public class ExpenseController {
 
 	}
 	
+	@GetMapping("/transactions/")
+	public CollectionModel<TransactionModel> allTransaction() {
+		return transactionModelAssembler.toCollectionModel(expenseService.getBalance());
+	}
+	
 	@PostMapping(path = "/")
 	public CollectionModel<TransactionModel> add(@Valid @RequestBody ExpenseDTO dto) {
 		Expense expense = createExpense(dto);
@@ -156,19 +159,12 @@ public class ExpenseController {
 		return transactionModelAssembler.toCollectionModel(expenseService.getBalance());
 	}
 	
-	@GetMapping("/transactions/")
-	public CollectionModel<TransactionModel> allTransaction() {
-		return transactionModelAssembler.toCollectionModel(expenseService.getBalance());
+	@GetMapping(path = "/history/")
+	public CollectionModel<ExpenseModel> all() {
+		return expenseModelAssembler.toCollectionModel(expenseService.getExpenses());
 	}
 	
-	/*@GetMapping(path = "/history/")
-	public String showHistory(Model model) {
-		model.addAttribute("expenses", expenseService.getExpenses());
-		
-		return "show-history";
-	}
-	
-	@GetMapping(path = "/expenses/delete")
+	/*@GetMapping(path = "/expenses/delete")
 	public String deleteExpense(Model model, @RequestParam Long id) {
 		expenseService.deleteExpense(id);
 		
