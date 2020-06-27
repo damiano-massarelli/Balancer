@@ -3,8 +3,7 @@ package com.dam.balancer.model.representational;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.AbstractMap;
-import java.util.Map;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,15 @@ public class ExpenseModelAssembler implements RepresentationModelAssembler<Expen
 	
 	@Override
 	public ExpenseModel toModel(Expense entity) {
-		Map<EntityModel<User>, Float> debtor2debt = entity.getDebtorToDebt().entrySet().stream()
-		.map(d2d -> new AbstractMap.SimpleEntry<EntityModel<User>, Float>(userModelAssembler.toModel(d2d.getKey()), d2d.getValue()))
-		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		Collection<ExpenseModel.DebtorToDebtModel> debtor2debtCollection = entity.getDebtorToDebt().entrySet().stream()
+		.map(d2d -> new ExpenseModel.DebtorToDebtModel(userModelAssembler.toModel(d2d.getKey()), d2d.getValue()))
+		.collect(Collectors.toList());
 		
-		return new ExpenseModel(entity.getId(), entity.getTitle(), debtor2debt, entity.getAmount());
+		CollectionModel<ExpenseModel.DebtorToDebtModel> debtor2debt = new CollectionModel<ExpenseModel.DebtorToDebtModel>(debtor2debtCollection);
+		
+		EntityModel<User> creditorModel = userModelAssembler.toModel(entity.getCreditor());
+		
+		return new ExpenseModel(entity.getId(), entity.getTitle(), creditorModel, debtor2debt, entity.getDate(), entity.getAmount());
 	}
 
 	@Override

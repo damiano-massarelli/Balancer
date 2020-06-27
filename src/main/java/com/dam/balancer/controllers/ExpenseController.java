@@ -17,6 +17,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -164,12 +165,8 @@ public class ExpenseController {
 		return expenseModelAssembler.toCollectionModel(expenseService.getExpenses());
 	}
 	
-	/*@GetMapping(path = "/expenses/delete")
-	public String deleteExpense(Model model, @RequestParam Long id) {
-		expenseService.deleteExpense(id);
-		
-		model.addAttribute("expenses", expenseService.getExpenses());
-		
-		return "show-history";
-	}*/
+	@DeleteMapping(path = "/history/{expenseId}")
+	public void deleteExpense(@PathVariable Long expenseId) {
+		expenseService.deleteExpense(expenseId);
+	}
 }

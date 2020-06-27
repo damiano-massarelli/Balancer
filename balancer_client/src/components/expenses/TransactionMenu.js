@@ -37,7 +37,6 @@ export default function TransactionMenu(props) {
         const fetchData = async () => {
             setIsLoadingTransactions(true);
             const result = await ExpenseApiStub.getTransactions();
-            console.log(result);
             if (result.errors) {
                 setTransactions([]);
             }

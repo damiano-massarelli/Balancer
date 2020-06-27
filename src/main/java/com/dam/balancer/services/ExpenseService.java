@@ -17,6 +17,8 @@ import com.dam.balancer.model.Transaction;
 import com.dam.balancer.model.User;
 import com.dam.balancer.model.balance.AbstractBalanceCalculator;
 import com.dam.balancer.repos.ExpenseRepository;
+import com.dam.balancer.services.exceptions.NoSuchExpenseException;
+import com.dam.balancer.services.exceptions.NoSuchUserException;
 
 
 /**
@@ -142,6 +144,9 @@ public class ExpenseService {
 	 * @param id the id of the expense to delete
 	 */
 	public void deleteExpense(Long id) {
+		expenseRepository.findById(id).orElseThrow(() -> { 
+			return new NoSuchExpenseException("Cannot find expense with id " + id);
+		});
 		expenseRepository.deleteById(id);
 	}
 	

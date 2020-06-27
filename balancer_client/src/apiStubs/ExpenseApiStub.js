@@ -58,6 +58,20 @@ export default class ExpenseApiStub {
         return { data: null, errors: result.errors };
     }
 
+    static async getExpenses() {
+        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + "history/", 'GET');
+        let expenses = null;
+        if (result.data) {
+            expenses = result.data._embedded ? result.data._embedded.expenseModelList : [];
+        }
+        return { expenses, errors: result.errors };
+    }
+
+    static async deleteExpense(expenseId) {
+        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + `history/${expenseId}`, 'DELETE');
+        return { data: null, errors: result.errors };
+    }
+
     static async post(title, amount, creditor, debtors, groups, debtorToExtra) {
         const expenseDTO = {
             title,
