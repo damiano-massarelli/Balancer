@@ -1,8 +1,0 @@
-
-ul.list-group-striped > li:nth-of-type(odd){
-    background: rgb(240, 240, 240);
-}
-
-.transaction-title {
-    font-size: 1.8em;
-}
