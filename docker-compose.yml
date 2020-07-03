@@ -1,0 +1,14 @@
+version: '2'
+
+services: 
+    balancer:
+        build: 
+            context: ./app_tier/
+        container_name: app
+        ports:
+            - "8092:8092"
+
+    db:
+        build:
+            context: ./db_tier
+        container_name: db

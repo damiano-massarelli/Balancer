@@ -1,6 +1,5 @@
 import { USER_API_PATH } from './config';
 import GenericApiStub from './GenericApiStub';
-import Group from '../components/groups/Group';
 
 export default class UserApiStub {
     static async get() {
