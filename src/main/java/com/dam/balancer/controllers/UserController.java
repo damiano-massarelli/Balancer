@@ -7,6 +7,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dam.balancer.controllers.dtos.UserDTO;
 import com.dam.balancer.model.User;
 import com.dam.balancer.model.representational.UserModelAssembler;
+import com.dam.balancer.services.ExpenseService;
 import com.dam.balancer.services.UserService;
 
 @CrossOrigin
@@ -26,12 +28,21 @@ public class UserController {
 	private UserService userService;
 	
 	@Autowired
+	private ExpenseService expenseSerivce;
+	
+	@Autowired
 	private UserModelAssembler userModelAssembler;
 
 	@GetMapping(path="/")
 	public CollectionModel<EntityModel<User>> all() {
 		return userModelAssembler.toCollectionModel(userService.findAll());
-	} 
+	}
+	
+	@GetMapping(path="/net/{userId}")
+	float netForUser(@PathVariable Long userId) {
+		User user = userService.findById(userId);
+		return expenseSerivce.getNetFor(user);
+	}
 
 	@PostMapping(path="/")
 	public EntityModel<User> add(@Valid @RequestBody UserDTO dto) {

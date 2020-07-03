@@ -18,8 +18,6 @@ import com.dam.balancer.model.User;
 import com.dam.balancer.model.balance.AbstractBalanceCalculator;
 import com.dam.balancer.repos.ExpenseRepository;
 import com.dam.balancer.services.exceptions.NoSuchExpenseException;
-import com.dam.balancer.services.exceptions.NoSuchUserException;
-
 
 /**
  * Keeps track of all the expenses.
@@ -65,10 +63,10 @@ public class ExpenseService {
 	 * @return the total credit for the user
 	 */
 	public float getTotalCreditFor(User handle) {
-		return (float) getExpenses().stream()
-				.filter(expense -> expense.getCreditor().equals(handle))
-				.mapToDouble(Expense::getAmountDue)
-				.sum();
+		Float credit = expenseRepository.getTotalCreditForUser(handle);
+		
+		// null if the given user is never a creditor
+		return credit == null ? 0.f : credit;
 	}
 	
 	/**
@@ -77,9 +75,10 @@ public class ExpenseService {
 	 * @return the total debt of the user
 	 */
 	public float getTotalDebtFor(User handle) {
-		return (float) getExpenses().stream()
-				.mapToDouble(expense -> expense.getDebtFor(handle))
-				.sum();
+		Float debt = expenseRepository.getTotalDebtForUser(handle);
+		
+		// null if the given user is never a debtor
+		return debt == null ? 0.f : debt;
 	}
 	
 	/**

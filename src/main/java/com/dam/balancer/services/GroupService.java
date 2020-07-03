@@ -27,7 +27,7 @@ public class GroupService {
 	 * @throws NoSuchGroupException if there is no {@link Group} with the given id
 	 */
 	public Group getById(Long id) {
-		return groupRepository.findById(id).orElseThrow(() -> {
+		return groupRepository.findById(id).<NoSuchGroupException>orElseThrow(() -> {
 			throw new NoSuchGroupException("Cannot find group with id " + id);
 		});
 	}

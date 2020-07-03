@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -35,6 +39,9 @@ public class Expense {
 	
 	// maps the name of a debtor to its debt for this expense
 	@ElementCollection
+	@MapKeyJoinColumn(name="debtor_id")
+	@Column(name="debt")
+	@CollectionTable(name="expense_debtor_to_debt", joinColumns=@JoinColumn(name="expense_id"))
 	private Map<User, Float> debtorToDebt;
 	
 	@Temporal(TemporalType.DATE)
@@ -133,7 +140,7 @@ public class Expense {
 	
 	/**
 	 * Whether an user is a debtor for this expense
-	 * @param handle user's name
+	 * @param handle the user
 	 * @return true if s/he is a debtor, false otherwise
 	 */
 	public boolean isDebtor(User handle) {
@@ -142,7 +149,7 @@ public class Expense {
 	
 	/**
 	 * Whether an user is the creditor for this expense
-	 * @param handle user's name
+	 * @param handle the user
 	 * @return true if s/he is the creditor, false otherwise
 	 */
 	public boolean isCreditor(User handle) {
@@ -151,7 +158,7 @@ public class Expense {
 	
 	/**
 	 * Gets the debt of a certain user.
-	 * @param handle the user's name
+	 * @param handle the user
 	 * @return the debt of the given user, 0 if s/he is not present.
 	 */
 	public float getDebtFor(User handle) {

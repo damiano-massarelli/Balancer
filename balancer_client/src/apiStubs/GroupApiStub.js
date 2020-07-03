@@ -1,26 +1,15 @@
 import { GROUPS_API_PATH } from './config';
+import GenericApiStub from './GenericApiStub';
 
 export default class GroupApiStub {
     static async get() {
-        let result = {groups: [], errors: {generic: "The service is temporarily unavailable"}};
-
-        let response = null;
-        try {
-            response = await fetch(GROUPS_API_PATH);
-        }
-        catch (_) {
-            return result;   
+        const result = await GenericApiStub.request(GROUPS_API_PATH, 'GET');
+        let groups = [];
+        if (result.data) {
+            groups = result.data._embedded ? result.data._embedded.groupModelList : [];
         }
 
-        if (response.ok) { 
-            const data = await response.json();
-            result = {
-                groups: data._embedded ? data._embedded.groupModelList : [], 
-                errors: null
-            };
-        }
-
-        return result;
+        return { groups, errors: result.errors };
     }
 
     static async post(groupName, members) {
@@ -29,32 +18,7 @@ export default class GroupApiStub {
             userIds: members.map(user => user.id)
         };
 
-        let result = { group: null, errors: {"generic": "The service is temporarily unavailable"} };
-
-        let response = null;
-        try {
-            response = await fetch(GROUPS_API_PATH, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(groupDto)
-            });
-        }
-        catch (_) {
-            return result;
-        }
-
-        const data = await response.json();
-        if (response.ok) {
-            result.group = data;
-            result.errors = null;
-        }
-        else if (response.status === 400) { // bad request, error details are stored in the response data
-            result.errors = data;
-        }
-
-        return result;
+        const result = await GenericApiStub.request(GROUPS_API_PATH, 'POST', groupDto);
+        return { group: result.data, errors: result.errors };
     }
 } 

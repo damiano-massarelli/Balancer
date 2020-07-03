@@ -61,7 +61,7 @@ export default function Expense(props) {
                 <div className="mb-3">
                     <h5 className="expense-title">{expense.title}</h5>
                     <span className="ml-2">{`(${expense.date})`}</span><br />
-                    <span><i className="fa fa-user"></i> {expense.creditor.name}</span>
+                    Creditor: <span><i className="fa fa-user"></i> {expense.creditor.name}</span>
                     <span className="badge badge-success ml-2"><span>{expense.amount}</span> &euro;</span>
                 </div>
                 <Button variant="outline-danger"
@@ -70,6 +70,7 @@ export default function Expense(props) {
                     onClick={deleteExpense}>
                     <i className="fa fa-trash"></i> {loadingSpinner}
                 </Button>
+                <span>Debtors: </span>
                 <ElementList as={DebtorToDebt}
                     elements={debtorToDebt}
                     keyExtractor={data => data.debtor.id} />

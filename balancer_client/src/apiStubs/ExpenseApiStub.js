@@ -1,45 +1,10 @@
 import { EXPSENSES_API_PATH } from './config';
+import GenericApiStub from './GenericApiStub';
 
 export default class ExpenseApiStub {
-    static async _request(uri, method, dataToSend) {
-        let result = { data: null, errors: { "generic": "The service is temporarily unavailable" } };
-
-        let response = null;
-        try {
-            response = await fetch(uri, {
-                method,
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToSend)
-            });
-        }
-        catch (_) {
-            return result;
-        }
-
-        let data = null;
-        try {
-            data = await response.json();
-        }
-        catch (_) { }
-
-        if (response.ok) {
-            result = {
-                data,
-                errors: null
-            };
-        }
-        else if (response.status === 400) {
-            result = { data: null, errors: data };
-        }
-
-        return result;
-    }
 
     static async getTransactions() {
-        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + "transactions/", 'GET');
+        const result = await GenericApiStub.request(EXPSENSES_API_PATH + "transactions/", 'GET');
         let transactions = null;
         if (result.data) {
             transactions = result.data._embedded ? result.data._embedded.transactionModelList : [];
@@ -54,12 +19,13 @@ export default class ExpenseApiStub {
             amount
         };
 
-        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + "transactions/", 'DELETE', transactionDTO);
+        const result = await GenericApiStub.request(EXPSENSES_API_PATH + "transactions/", 'DELETE', transactionDTO);
+        console.log(result)
         return { data: null, errors: result.errors };
     }
 
     static async getExpenses() {
-        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + "history/", 'GET');
+        const result = await GenericApiStub.request(EXPSENSES_API_PATH + "history/", 'GET');
         let expenses = null;
         if (result.data) {
             expenses = result.data._embedded ? result.data._embedded.expenseModelList : [];
@@ -68,7 +34,7 @@ export default class ExpenseApiStub {
     }
 
     static async deleteExpense(expenseId) {
-        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH + `history/${expenseId}`, 'DELETE');
+        const result = await GenericApiStub.request(EXPSENSES_API_PATH + `history/${expenseId}`, 'DELETE');
         return { data: null, errors: result.errors };
     }
 
@@ -82,7 +48,7 @@ export default class ExpenseApiStub {
             debtorToExtra
         };
 
-        const result = await ExpenseApiStub._request(EXPSENSES_API_PATH, 'POST', expenseDTO);
+        const result = await GenericApiStub.request(EXPSENSES_API_PATH, 'POST', expenseDTO);
         let transactions = null;
         if (result.data) {
             transactions = result.data._embedded ? result.data._embedded.transactionModelList : [];
