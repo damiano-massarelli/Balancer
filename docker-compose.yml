@@ -12,3 +12,10 @@ services:
         build:
             context: ./db_tier
         container_name: db
+
+    web:
+        build:
+            context: ./web_tier/
+        container_name: web
+        ports:
+            - "3000:80"
