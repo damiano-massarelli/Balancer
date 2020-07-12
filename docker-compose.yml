@@ -1,21 +1,37 @@
-version: '2'
+version: '3.4'
 
 services: 
-    balancer:
+    balancer-app:
+        image: damidk/balancer-app
         build: 
-            context: ./app_tier/
-        container_name: app
+            context: ./app_tier/balancer-app/
         ports:
             - "8092:8092"
+        environment:
+            - EUREKA_SERVER_ADDRESS=http://balancer-eureka:8761/eureka
+    
+    balancer-compute:
+        image: damidk/balancer-compute
+        build: 
+            context: ./app_tier/balancer-compute/
+        environment:
+            - EUREKA_SERVER_ADDRESS=http://balancer-eureka:8761/eureka
 
-    db:
+    balancer-eureka:
+        image: damidk/balancer-eureka-server
+        build: 
+            context: ./app_tier/eureka-server/
+        ports:
+            - "8761:8761"
+
+    balancer-db:
+        image: damidk/balancer-db
         build:
-            context: ./db_tier
-        container_name: db
+            context: ./db_tier/
 
-    web:
+    balancer-web-app:
+        image: damidk/balancer-web-app
         build:
             context: ./web_tier/
-        container_name: web
         ports:
             - "3000:80"

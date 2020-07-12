@@ -147,8 +147,9 @@ public class ExpenseService {
 			userIdToNet.put(entry.getKey().getId(), entry.getValue());
 			userIdToUser.put(entry.getKey().getId(), entry.getKey());
 		});
-		List<TransactionData> transactionData = computeService.getBalance(userIdToNet);
 		
+		
+		List<TransactionData> transactionData = computeService.getBalance(userIdToNet);
 		
 		List<Transaction> transactions = transactionData.stream().map(data -> {
 				User from = userIdToUser.get(data.getFromId());
