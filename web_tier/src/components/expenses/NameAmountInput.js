@@ -35,7 +35,7 @@ export default function TextInput(props) {
                 <FormControl placeholder={"Amount"}
                     onChange={event => setAmount(event.target.value)}
                     value={amount}
-                    type="number" required />
+                    type="number" step="0.01" required />
                 <InputGroup.Prepend>
                     <Button variant="outline-secondary"
                         type="submit"
