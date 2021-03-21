@@ -1,0 +1,11 @@
+.table-righ-bordered table {
+    border-right: 0.1em solid gainsboro;
+}
+
+.transaction-title {
+    font-size: 1.4em;
+}
+
+h1, h2, h3, h4, h5, h6.expense-title {
+    display: inline;
+}

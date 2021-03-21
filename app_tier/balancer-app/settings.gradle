@@ -1,0 +1,4 @@
+rootProject.name = 'balancer'
+
+include ':balancer-common'
+project(':balancer-common').projectDir = file('../balancer-common')

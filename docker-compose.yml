@@ -1,0 +1,46 @@
+version: '3.4'
+
+services: 
+    balancer-db:
+        image: postgres:latest
+        environment: 
+            PGDATA: /var/lib/postgresql/pgdata
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: postgres
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+    balancer-app:
+        image: damidk/balancer-app
+        build: 
+            context: ./app_tier/balancer-app/
+        ports:
+            - "8092:8092"
+        environment:
+            - EUREKA_SERVER_ADDRESS=http://balancer-eureka:8761/eureka
+        restart: always
+    
+    balancer-compute:
+        image: damidk/balancer-compute
+        build: 
+            context: ./app_tier/balancer-compute/
+        environment:
+            - EUREKA_SERVER_ADDRESS=http://balancer-eureka:8761/eureka
+
+    balancer-eureka:
+        image: damidk/balancer-eureka-server
+        build: 
+            context: ./app_tier/eureka-server/
+        ports:
+            - "8761:8761"
+
+    balancer-web-app:
+        image: damidk/balancer-web-app
+        build:
+            context: ./web_tier/
+        ports:
+            - "3000:80"
+
+volumes:
+    pgdata:
+        external: true
